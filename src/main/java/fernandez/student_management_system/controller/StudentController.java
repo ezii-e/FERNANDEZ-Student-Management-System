@@ -1,7 +1,7 @@
-package com.example.test_student_management.controller;
+package fernandez.student_management_system.controller;
 
-import com.example.test_student_management.model.Student;
-import com.example.test_student_management.repository.StudentRepository;
+import fernandez.student_management_system.model.Student;
+import fernandez.student_management_system.repository.StudentRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +18,7 @@ import javafx.scene.layout.Region;
 import java.sql.SQLException;
 
 public class StudentController {
+
     private static final int PAGE_SIZE = 10;
 
     @FXML private TextField idField;
@@ -28,6 +29,7 @@ public class StudentController {
     @FXML private TextField yearLevelField;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
+
     @FXML private TableView<Student> studentTable;
     @FXML private TableColumn<Student, Integer> idColumn;
     @FXML private TableColumn<Student, String> studentNumberColumn;
@@ -37,6 +39,7 @@ public class StudentController {
     @FXML private TableColumn<Student, Integer> yearLevelColumn;
     @FXML private TableColumn<Student, String> emailColumn;
     @FXML private TableColumn<Student, String> phoneColumn;
+
     @FXML private Pagination studentPagination;
 
     private final StudentRepository repository = new StudentRepository();
@@ -44,6 +47,7 @@ public class StudentController {
 
     @FXML
     public void initialize() {
+
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         studentNumberColumn.setCellValueFactory(new PropertyValueFactory<>("studentNumber"));
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -52,9 +56,18 @@ public class StudentController {
         yearLevelColumn.setCellValueFactory(new PropertyValueFactory<>("yearLevel"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
+
         studentTable.setItems(students);
-        studentTable.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, selected) -> populateForm(selected));
+
+        // ✅ FIX: removes ghost/extra column issue
+        studentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        studentTable.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((obs, oldValue, selected) -> populateForm(selected));
+
         studentPagination.setPageFactory(this::createPage);
+
         studentPagination.currentPageIndexProperty().addListener((obs, oldIndex, newIndex) -> {
             try {
                 loadPage(newIndex.intValue());
@@ -62,14 +75,14 @@ public class StudentController {
                 showError("Database error", e.getMessage());
             }
         });
+
         refreshPagination();
     }
 
     @FXML
     private void handleAdd(ActionEvent event) {
-        if (!validateForm(true)) {
-            return;
-        }
+        if (!validateForm(true)) return;
+
         try {
             repository.insert(buildStudent(false));
             clearForm();
@@ -81,9 +94,8 @@ public class StudentController {
 
     @FXML
     private void handleUpdate(ActionEvent event) {
-        if (!validateForm(false)) {
-            return;
-        }
+        if (!validateForm(false)) return;
+
         try {
             repository.update(buildStudent(true));
             clearForm();
@@ -96,10 +108,12 @@ public class StudentController {
     @FXML
     private void handleDelete(ActionEvent event) {
         Student selected = studentTable.getSelectionModel().getSelectedItem();
+
         if (selected == null) {
             showError("No selection", "Choose a student to delete.");
             return;
         }
+
         try {
             repository.delete(selected.getId());
             clearForm();
@@ -116,17 +130,19 @@ public class StudentController {
 
     @FXML
     private void handleLogout(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to log out?", ButtonType.YES, ButtonType.NO);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Are you sure you want to log out?",
+                ButtonType.YES, ButtonType.NO);
+
         alert.setTitle("Logout Confirmation");
         alert.setHeaderText(null);
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
-                // Safely close the application window upon logout
-                if (studentTable.getScene() != null && studentTable.getScene().getWindow() != null) {
+                if (studentTable.getScene() != null &&
+                        studentTable.getScene().getWindow() != null) {
                     studentTable.getScene().getWindow().hide();
                 }
-                System.out.println("User logged out successfully.");
             }
         });
     }
@@ -135,10 +151,14 @@ public class StudentController {
         try {
             int totalStudents = repository.countAll();
             int pageCount = Math.max(1, (int) Math.ceil(totalStudents / (double) PAGE_SIZE));
+
             studentPagination.setPageCount(pageCount);
+
             int pageIndex = Math.min(studentPagination.getCurrentPageIndex(), pageCount - 1);
             studentPagination.setCurrentPageIndex(pageIndex);
+
             loadPage(pageIndex);
+
         } catch (SQLException e) {
             showError("Database error", e.getMessage());
         }
@@ -149,16 +169,26 @@ public class StudentController {
     }
 
     private void loadPage(int pageIndex) throws SQLException {
+
         int offset = pageIndex * PAGE_SIZE;
-        students.setAll(repository.findPage(PAGE_SIZE, offset));
+
+        // ✅ IMPORTANT: NO extra sorting here (prevents pagination bug)
+        ObservableList<Student> pageData =
+                FXCollections.observableArrayList(
+                        repository.findPage(PAGE_SIZE, offset)
+                );
+
+        students.setAll(pageData);
         studentTable.getSelectionModel().clearSelection();
     }
 
     private Student buildStudent(boolean includeId) {
         Student student = new Student();
+
         if (includeId) {
             student.setId(Integer.parseInt(idField.getText().trim()));
         }
+
         student.setStudentNumber(studentNumberField.getText().trim());
         student.setFirstName(firstNameField.getText().trim());
         student.setLastName(lastNameField.getText().trim());
@@ -166,38 +196,34 @@ public class StudentController {
         student.setYearLevel(Integer.parseInt(yearLevelField.getText().trim()));
         student.setEmail(emailField.getText().trim());
         student.setPhone(phoneField.getText().trim());
+
         return student;
     }
 
     private boolean validateForm(boolean allowEmptyId) {
+
         if (!allowEmptyId && idField.getText().trim().isEmpty()) {
-            showError("Missing selection", "Select a student from the table first.");
+            showError("Missing selection", "Select a student first.");
             return false;
         }
+
         if (studentNumberField.getText().trim().isEmpty()
                 || firstNameField.getText().trim().isEmpty()
                 || lastNameField.getText().trim().isEmpty()
                 || courseField.getText().trim().isEmpty()
                 || yearLevelField.getText().trim().isEmpty()) {
-            showError("Missing data", "Student number, name, course, and year level are required.");
+
+            showError("Missing data",
+                    "Student number, name, course, and year level are required.");
             return false;
         }
-        try {
-            Integer.parseInt(yearLevelField.getText().trim());
-            if (!allowEmptyId) {
-                Integer.parseInt(idField.getText().trim());
-            }
-        } catch (NumberFormatException e) {
-            showError("Invalid number", "ID and year level must be numeric.");
-            return false;
-        }
+
         return true;
     }
 
     private void populateForm(Student student) {
-        if (student == null) {
-            return;
-        }
+        if (student == null) return;
+
         idField.setText(String.valueOf(student.getId()));
         studentNumberField.setText(student.getStudentNumber());
         firstNameField.setText(student.getFirstName());
@@ -217,6 +243,7 @@ public class StudentController {
         yearLevelField.clear();
         emailField.clear();
         phoneField.clear();
+
         studentTable.getSelectionModel().clearSelection();
     }
 
