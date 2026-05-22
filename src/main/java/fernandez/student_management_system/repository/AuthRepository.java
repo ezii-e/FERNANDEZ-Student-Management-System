@@ -1,7 +1,7 @@
-package com.example.test_student_management.repository;
+package fernandez.student_management_system.repository;
 
-import com.example.test_student_management.util.Database;
-import com.example.test_student_management.util.PasswordUtil;
+import fernandez.student_management_system.util.Database;
+import fernandez.student_management_system.util.PasswordUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
