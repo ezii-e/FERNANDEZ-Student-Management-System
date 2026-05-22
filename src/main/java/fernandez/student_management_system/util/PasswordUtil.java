@@ -1,4 +1,4 @@
-package com.example.test_student_management.util;
+package fernandez.student_management_system.util;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
