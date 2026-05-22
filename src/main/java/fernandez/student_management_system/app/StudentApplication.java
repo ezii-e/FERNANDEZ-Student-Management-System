@@ -1,6 +1,6 @@
-package com.example.test_student_management.app;
+package fernandez.student_management_system.app;
 
-import com.example.test_student_management.factory.AuthWindowFactory;
+import fernandez.student_management_system.factory.AuthWindowFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
