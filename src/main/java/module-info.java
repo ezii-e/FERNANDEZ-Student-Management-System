@@ -1,10 +1,11 @@
-module com.example.test_student_management {
+module fernandez.student_management_system {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
     requires io.github.cdimascio.dotenv.java;
 
-    opens com.example.test_student_management.controller to javafx.fxml;
-    opens com.example.test_student_management.model to javafx.base;
-    exports com.example.test_student_management.app;
+    opens fernandez.student_management_system.controller to javafx.fxml;
+    opens fernandez.student_management_system.model to javafx.base;
+
+    exports fernandez.student_management_system.app;
 }
