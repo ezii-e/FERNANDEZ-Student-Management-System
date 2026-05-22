@@ -1,4 +1,4 @@
-package com.example.test_student_management.util;
+package fernandez.student_management_system.util;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;
