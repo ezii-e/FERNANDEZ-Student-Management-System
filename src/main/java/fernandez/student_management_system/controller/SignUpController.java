@@ -1,7 +1,7 @@
-package com.example.test_student_management.controller;
+package fernandez.student_management_system.controller;
 
-import com.example.test_student_management.factory.AuthWindowFactory;
-import com.example.test_student_management.repository.AuthRepository;
+import fernandez.student_management_system.factory.AuthWindowFactory;
+import fernandez.student_management_system.repository.AuthRepository;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
