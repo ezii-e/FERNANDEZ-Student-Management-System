@@ -17,7 +17,7 @@
             hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
             xmlns="http://javafx.com/javafx/26"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.test_student_management.controller.SignUpController"
+            fx:controller="fernandez.student_management_system.controller.SignUpController"
             style="-fx-background-color: #1a0a2e; -fx-background: #1a0a2e;">
 
     <content>
