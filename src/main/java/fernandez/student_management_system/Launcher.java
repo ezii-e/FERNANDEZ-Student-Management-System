@@ -1,6 +1,6 @@
-package com.example.test_student_management;
+package fernandez.student_management_system;
 
-import com.example.test_student_management.app.StudentApplication;
+import fernandez.student_management_system.app.StudentApplication;
 import javafx.application.Application;
 
 public class Launcher {
