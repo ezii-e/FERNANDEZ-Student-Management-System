@@ -1,4 +1,4 @@
-package com.example.test_student_management.model;
+package fernandez.student_management_system.model;
 
 public class UserAccount {
     private int id;
